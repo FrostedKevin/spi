@@ -1,0 +1,187 @@
+#!/bin/bash
+
+############################################################################
+# Squid Proxy Installer (SPI)                                              #
+# Version: 2.0 Build 2017                                                  #
+# Branch: Stable                                                           #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+# Author: Hidden Refuge (© 2014 - 2017)                                    #
+# License: MIT License                                                     #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+# GitHub Repo: https://github.com/hidden-refuge/spi/                       #
+# SPI Wiki: https://github.com/hidden-refuge/spi/wiki                      #
+############################################################################
+
+# Declaring a few misc variables
+vspiversion=2.0 # SPI version
+vspibuild=2017 # SPI build number
+vbranch=Stable # SPI build branch
+vsysarch=$(getconf LONG_BIT) # System architecture
+uname="default"
+pword="default"
+
+# Function for iptables rules (CentOS 5 & 6)
+firew1 ()	{
+	# Opening default Squid port 3128 for clients to connect
+	sudo iptables -I INPUT -p tcp --dport 3128 -j ACCEPT || iptables -I INPUT -p tcp --dport 3128 -j ACCEPT
+	# Saving firewall rules
+	sudo service iptables save || service iptables save
+}
+
+# Function for iptables rules (CentOS 7, Debian, Ubuntu, Fedora)
+firew2 ()	{
+	# Opening default Squid port 3128 for clients to connect
+	iptables -I INPUT -p tcp --dport 3128 -j ACCEPT
+	# Saving firewall rules
+	iptables-save
+}
+
+# Function for RHEL 6 Linux distributions
+rhel6 ()	{
+	# Installing necessary packages (Squid, httpd-tools for htpasswd and dependencies)
+	sudo yum install squid httpd-tools -y
+	# Creating user with username from $uname and asking user to set a password
+	sudo htpasswd -b -c /etc/squid/passwd $uname $pword
+	# Downloading necessary Squid.conf for the corresponding OS & system architecture
+	case $vsysarch in
+			32) # 32 bit Squid configuration
+					sudo curl -k -o /etc/squid/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-rhel5632.conf;;
+			64) # 64 bit Squid configuration
+					sudo curl -k -o /etc/squid/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-rhel5664.conf;;
+	esac
+	# Creating empty blacklist.acl file for further blacklisting entries
+	sudo touch /etc/squid/blacklist.acl
+	# Restarting Squid and enabling its service
+	sudo service squid restart && sudo chkconfig squid on
+	# Running function firew1
+	firew1	
+}
+
+# Function for RHEL 7 Linux distributions
+rhel7 ()	{
+	# Installing necessary packages (Squid, httpd-tools for htpasswd and dependencies)
+	sudo yum install squid httpd-tools -y
+	# Creating user with username from $uname and asking user to set a password
+	sudo htpasswd -b -c /etc/squid/passwd $uname $pword
+	# Downloading Squid configuration 
+	sudo curl -k -o /etc/squid/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-rhel7.conf
+	# Creating empty blacklist.acl file for further blacklisting entries
+	sudo touch /etc/squid/blacklist.acl
+	# Restarting Squid and enabling its service
+	sudo systemctl restart squid.service && systemctl enable squid.service
+	# Running function firew2
+	firew2
+}
+
+# Function for Debian "Jessie" 8
+deb9 ()	{
+	# Updating package database
+	apt-get update
+	# Installing necessary packages (Squid, apache2-utils for htpassword and dependencies)
+	apt-get install apache2-utils squid3 -y
+	# Creating user with username from $uname and asking user to set a password
+	htpasswd -b -c /etc/squid/passwd $uname $pword
+	# Downloading Squid configuration
+	wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-stretch.conf --no-check-certificate
+	# Creating empty blacklist.acl file for further blacklisting entries
+	touch /etc/squid/blacklist.acl
+	# Restarting Squid and enabling its service
+	systemctl restart squid.service && systemctl enable squid.service
+	# Running function firew2
+	firew2
+}
+
+deb ()	{
+	# Updating package database
+	apt-get update
+	# Installing necessary packages (Squid, apache2-utils for htpassword and dependencies)
+	apt-get install apache2-utils squid3 -y
+	# Creating user with username from $uname and asking user to set a password
+	htpasswd -b -c /etc/squid3/passwd $uname $pword
+	# Downloading Squid configuration
+	wget -O /etc/squid3/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-jessie.conf --no-check-certificate
+	# Creating empty blacklist.acl file for further blacklisting entries
+	touch /etc/squid3/blacklist.acl
+	# Restarting Squid and enabling its service
+	systemctl restart squid3.service && systemctl enable squid3.service
+	# Running function firew2
+	firew2
+}
+
+# Function for Ubuntu
+ubt ()	{
+	# Updating package database
+	apt-get update
+	# Installing necessary packages (Squid, apache2-utils for htpassword and dependencies)
+	apt-get install apache2-utils squid3 -y
+	# Creating user with username from $uname and asking user to set a password
+	htpasswd -b -c /etc/squid/passwd $uname $pword
+	# Downloading Squid configuration
+	wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-ubuntu.conf --no-check-certificate
+	# Creating empty blacklist.acl file for further blacklisting entries
+	touch /etc/squid/blacklist.acl	
+	# Restarting Squid and enabling its service
+	systemctl restart squid && systemctl enable squid
+	# Running function firew2
+	firew2
+}
+
+# Function for Fedora
+fed () {
+	# Installing necessary packages (Squid, httpd-tools for htpasswd and dependencies)
+	yum install squid httpd-tools -y
+	# Creating user with username from $uname and asking user to set a password
+	htpasswd -b -c /etc/squid/passwd $uname $pword
+	# Downloading necessary Squid.conf for the corresponding OS & system architecture
+	case $vsysarch in
+		32) # 32 bit Squid configuration
+			curl -o /etc/squid/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-fedora32.conf;;
+		64) # 64 bit Squid configuration
+			curl -o /etc/squid/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-rhel7.conf;;
+	esac
+	# Creating empty blacklist.acl file for further blacklisting entries
+	touch /etc/squid/blacklist.acl
+	# Restarting Squid and enabling its service
+	systemctl restart squid && systemctl enable squid
+	# Running function firew2
+	firew2
+}
+
+while [[ $# -gt 0 ]]
+do
+case $1 in
+	-u|--username)
+		uname="$2"
+	shift # past argument
+	shift # past value
+	;;
+	-p|--password)
+		pword="$2"
+	shift # past argument
+	shift # past value
+	;;  
+esac
+done
+
+# Autodetect Linux Distribution
+# PoC may need to be rewritten.
+if cat /etc/*release | grep -E 'Red|CentOS' | grep '6.'; then
+	rhel6;
+elif cat /etc/*release | grep ^NAME | grep -E 'Red|CentOS'; then
+	if cat /etc/*release | grep ^VERSION | grep 7; then
+		rhel7
+	fi
+elif cat /etc/*release | grep ^NAME | grep Fedora; then
+	fed
+elif cat /etc/*release | grep ^NAME | grep Ubuntu; then
+	ubt
+elif cat /etc/*release | grep ^NAME | grep Debian ; then
+	if cat /etc/*release | grep ^VERSION | grep 9; then
+		deb9
+	else
+		deb
+	fi
+else
+	echo "OS NOT DETECTED"
+	exit 1;
+fi
