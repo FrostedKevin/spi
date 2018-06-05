@@ -45,9 +45,9 @@ rhel6 ()	{
 	# Downloading necessary Squid.conf for the corresponding OS & system architecture
 	case $vsysarch in
 			32) # 32 bit Squid configuration
-					sudo curl -k -o /etc/squid/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-rhel5632.conf;;
+					sudo curl -k -o /etc/squid/squid.conf https://raw.githubusercontent.com/FrostedKevin/spi/master/spi-rhel5632.conf;;
 			64) # 64 bit Squid configuration
-					sudo curl -k -o /etc/squid/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-rhel5664.conf;;
+					sudo curl -k -o /etc/squid/squid.conf https://raw.githubusercontent.com/FrostedKevin/spi/master/spi-rhel5664.conf;;
 	esac
 	# Creating empty blacklist.acl file for further blacklisting entries
 	sudo touch /etc/squid/blacklist.acl
@@ -64,7 +64,7 @@ rhel7 ()	{
 	# Creating user with username from $uname and asking user to set a password
 	sudo htpasswd -b -c /etc/squid/passwd $uname $pword
 	# Downloading Squid configuration 
-	sudo curl -k -o /etc/squid/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-rhel7.conf
+	sudo curl -k -o /etc/squid/squid.conf https://raw.githubusercontent.com/FrostedKevin/spi/master/spi-rhel7.conf
 	# Creating empty blacklist.acl file for further blacklisting entries
 	sudo touch /etc/squid/blacklist.acl
 	# Restarting Squid and enabling its service
@@ -82,7 +82,7 @@ deb9 ()	{
 	# Creating user with username from $uname and asking user to set a password
 	htpasswd -b -c /etc/squid/passwd $uname $pword
 	# Downloading Squid configuration
-	wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-stretch.conf --no-check-certificate
+	wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/FrostedKevin/spi/master/spi-stretch.conf --no-check-certificate
 	# Creating empty blacklist.acl file for further blacklisting entries
 	touch /etc/squid/blacklist.acl
 	# Restarting Squid and enabling its service
@@ -99,7 +99,7 @@ deb ()	{
 	# Creating user with username from $uname and asking user to set a password
 	htpasswd -b -c /etc/squid3/passwd $uname $pword
 	# Downloading Squid configuration
-	wget -O /etc/squid3/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-jessie.conf --no-check-certificate
+	wget -O /etc/squid3/squid.conf https://raw.githubusercontent.com/FrostedKevin/spi/master/spi-jessie.conf --no-check-certificate
 	# Creating empty blacklist.acl file for further blacklisting entries
 	touch /etc/squid3/blacklist.acl
 	# Restarting Squid and enabling its service
@@ -117,7 +117,7 @@ ubt ()	{
 	# Creating user with username from $uname and asking user to set a password
 	htpasswd -b -c /etc/squid/passwd $uname $pword
 	# Downloading Squid configuration
-	wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-ubuntu.conf --no-check-certificate
+	wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/FrostedKevin/spi/master/spi-ubuntu.conf --no-check-certificate
 	# Creating empty blacklist.acl file for further blacklisting entries
 	touch /etc/squid/blacklist.acl	
 	# Restarting Squid and enabling its service
@@ -135,9 +135,9 @@ fed () {
 	# Downloading necessary Squid.conf for the corresponding OS & system architecture
 	case $vsysarch in
 		32) # 32 bit Squid configuration
-			curl -o /etc/squid/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-fedora32.conf;;
+			curl -o /etc/squid/squid.conf https://raw.githubusercontent.com/FrostedKevin/spi/master/spi-fedora32.conf;;
 		64) # 64 bit Squid configuration
-			curl -o /etc/squid/squid.conf https://raw.githubusercontent.com/dostoevskylabs/spi/master/spi-rhel7.conf;;
+			curl -o /etc/squid/squid.conf https://raw.githubusercontent.com/FrostedKevin/spi/master/spi-rhel7.conf;;
 	esac
 	# Creating empty blacklist.acl file for further blacklisting entries
 	touch /etc/squid/blacklist.acl
