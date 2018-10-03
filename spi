@@ -17,8 +17,8 @@ vspiversion=2.0 # SPI version
 vspibuild=2017 # SPI build number
 vbranch=Stable # SPI build branch
 vsysarch=$(getconf LONG_BIT) # System architecture
-uname="default"
-pword="default"
+uname="proxy"
+pword="proxy"
 
 # Function for iptables rules (CentOS 5 & 6)
 firew1 ()	{
